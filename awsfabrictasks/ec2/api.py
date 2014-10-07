@@ -160,6 +160,11 @@ class NoStaticForVPCInstanceError(InstanceLookupError):
     Raised when we can't find an elastic ip for a VPC instance where access_vpc is 'public'.
     """
 
+class NoAccessVPCInstanceError(InstanceLookupError):
+    """
+    Raised when we can't find the access_vpc where values are 'public, private or vpn'.
+    """
+
 class NoPrivateForVPCInstanceError(InstanceLookupError):
     """
     Raised when we can't find an private ip for a VPC instance where access_vpc is 'vpn'.
@@ -231,7 +236,7 @@ class Ec2InstanceWrapper(object):
             # we need access_vpc tag to know how we decide to access the instance
             access_vpc = self.instance.tags.get('access_vpc')
             # we will access instance via vpn
-            if access_vpc == 'vpn':
+            if access_vpc == 'vpn' or access_vpc == 'private':
                 host = self['private_ip_address']
             # we will access instance via public ip directly
             elif access_vpc == 'public':
